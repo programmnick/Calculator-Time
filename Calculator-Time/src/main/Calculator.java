@@ -26,7 +26,7 @@ public class Calculator implements ActionListener {
     JLabel top = new JLabel("");
     
     JButton[] buttons;
-    String[] buttonNames = {"0","1","2","3","4","5","6","7","8","9","←","x","/","-","+","CE","C","+-",",",};
+    String[] buttonNames = {"0","1","2","3","4","5","6","7","8","9","←","x","/","-","+","CE","C","+-",",","="};
     	
     static JFrame frame = new JFrame();
      
@@ -66,7 +66,7 @@ public class Calculator implements ActionListener {
         frame.getContentPane().add(BorderLayout.NORTH, s);     
         frame.getContentPane().add(BorderLayout.CENTER, p); 
                
-        buttons = new JButton[19];
+        buttons = new JButton[20];
          
         for (int i = 0; i < 10; i++) {
         	buttons[i] = new JButton(String.valueOf(i));
@@ -75,48 +75,13 @@ public class Calculator implements ActionListener {
         	buttons[i].addActionListener(this);
         }           
         
-        for (int i = 10; i < 19; i++) {
+        for (int i = 10; i < 20; i++) {
         	buttons[i] = new JButton(buttonNames[i]);
         	buttons[i].setBackground(new Color(240,240,240)); 
         	buttons[i].setFont(new Font("font", Font.BOLD, 19));
         	buttons[i].addActionListener(this);
-        }                            				     
-                     
-   
-        JButton count = new JButton("="); 
-        count.setBackground(new Color(240,240,240));
-        count.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (type == 0) {
-					top.setText("Choose mathtype");		
-					return;
-				}				
-				if (secondNum.equals("") && result.length() > 0) secondNum += result;
-				if (secondNum.equals("") && type > 0) secondNum = firstNum;
-				
-				result = ""; 
-				
-				if (type == 14) result += Double.valueOf(firstNum) + Double.valueOf(secondNum);		
-				if (type == 13) result += Double.valueOf(firstNum) - Double.valueOf(secondNum);					
-				if (type == 11) result += Double.valueOf(firstNum) * Double.valueOf(secondNum);
-				if (type == 12) result += Double.valueOf(firstNum) / Double.valueOf(secondNum);							
-				
-				if ((result.substring(result.length()-2,result.length()).equals(".0"))) {					
-					result = result.substring(0,result.length()-2);
-				}
-
-				System.out.println(firstNum + " " + secondNum + " " + result);
-				
-				main.setText(result);
-				top.setText("");
-				typeL.setText("");
-				firstNum = "";
-				secondNum = "";
-				isFirst = true;
-				type = 0;
-			} 
-		});
-                                           
+        }                            				                          
+        
         p.add(buttons[7]);
         p.add(buttons[8]);
         p.add(buttons[9]);
@@ -132,21 +97,20 @@ public class Calculator implements ActionListener {
         p.add(buttons[13]);
         p.add(buttons[0]);         
         p.add(buttons[14]);     
-        p.add(count);      
+        p.add(buttons[19]);      
     }
            
 	public void actionPerformed(ActionEvent e) {	
-		for (int i = 0; i < 16; i++) {
+		for (int i = 0; i < 20; i++) {
 			if (e.getActionCommand().equals(buttonNames[i])) {
 				source = i;
 			}
 		}			
 		
 		switch (source) {
-		case 10: 
+		case 10: 		
 			if (result.length() > 0) { 
-				result = result.substring(0, result.length()-1); main.setText(result); 
-				
+				result = result.substring(0, result.length()-1); main.setText(result); 				
 			}
 			if (isFirst && firstNum.length() > 0) {			  
 				firstNum = firstNum.substring(0, firstNum.length()-1);
@@ -157,21 +121,14 @@ public class Calculator implements ActionListener {
 				main.setText(secondNum);			
 			}
 			return;
-
-		case 16: 
-			firstNum = "";
-			secondNum = "";
-			isFirst = true;
-			type = 0;
-			main.setText(firstNum);
-			top.setText(secondNum);
-			typeL.setText("");
-			return;
 		
 		case 11:
 		case 12:
 		case 13:
 		case 14:
+			if (firstNum.equals("") && secondNum.equals("") && result.equals("")) 
+				return;
+			
 			if (result.length() > 0) {					  					  
 				firstNum = "";
 				firstNum += result;					  
@@ -201,6 +158,39 @@ public class Calculator implements ActionListener {
 				main.setText(secondNum);
 			}		
 			return;
+		
+		case 19: 
+			if (type == 0) return;
+											
+			if (secondNum.equals("") && result.length() > 0) secondNum += result;
+			if (secondNum.equals("") && type > 0) secondNum = firstNum;
+			
+			result = ""; 
+			
+			if (type == 14) result += Double.valueOf(firstNum) + Double.valueOf(secondNum);		
+			if (type == 13) result += Double.valueOf(firstNum) - Double.valueOf(secondNum);					
+			if (type == 11) result += Double.valueOf(firstNum) * Double.valueOf(secondNum);
+			if (type == 12) result += Double.valueOf(firstNum) / Double.valueOf(secondNum);							
+			
+			if ((result.substring(result.length()-2,result.length()).equals(".0"))) {					
+				result = result.substring(0,result.length()-2);
+			}
+			System.out.println(firstNum + " " + secondNum + " " + result); //for testing
+			
+			main.setText(result);				
+			 
+		case 16: 			
+			if (source == 16) 
+			main.setText("");			
+				
+		case 1916: //same code on 19(=) and 16(C) C will be added later
+			top.setText(""); 
+			typeL.setText("");
+			firstNum = "";
+			secondNum = "";
+			isFirst = true;
+			type = 0;
+			return;									
 		}								
 		
 	}	
